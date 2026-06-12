@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://dailyfive.at/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <lastmod>2026-06-12</lastmod>
+    <image:image>
+      <image:loc>https://dailyfive.at/og-image.png</image:loc>
+      <image:caption>DailyFive AT — täglich 5 kuratierte Deals für Österreich mit Countdown-Timer</image:caption>
+      <image:title>DailyFive AT — 5 Drops. Täglich.</image:title>
+    </image:image>
+  </url>
+</urlset>

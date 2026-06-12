@@ -1,0 +1,50 @@
+{
+  "name": "DailyFive AT — 5 Drops. Täglich.",
+  "short_name": "DailyFive",
+  "description": "Täglich 5 kuratierte Deals für Österreich. Jeder mit Countdown. Wer zu spät kommt, zahlt mehr.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08090c",
+  "theme_color": "#08090c",
+  "orientation": "portrait-primary",
+  "lang": "de-AT",
+  "categories": ["shopping", "lifestyle", "deals"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Heutige Deals",
+      "short_name": "Deals",
+      "url": "/?view=home",
+      "icons": [{"src": "icon.svg", "sizes": "any"}]
+    },
+    {
+      "name": "Favoriten",
+      "short_name": "Favs",
+      "url": "/?view=favs",
+      "icons": [{"src": "icon.svg", "sizes": "any"}]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DailyFive AT — 5 tägliche Deals mit Countdown"
+    },
+    {
+      "src": "og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DailyFive AT — täglich 5 kuratierte Deals für Österreich"
+    }
+  ]
+}

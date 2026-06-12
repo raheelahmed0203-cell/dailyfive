@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /*?*admin*
+
+# Discourage aggressive crawlers from hammering the single-page app
+Crawl-delay: 2
+
+Sitemap: https://dailyfive.at/sitemap.xml

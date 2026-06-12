@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f1116"/>
+      <stop offset="100%" stop-color="#08090c"/>
+    </linearGradient>
+    <linearGradient id="accent-g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff4d2e"/>
+      <stop offset="100%" stop-color="#ff7a5c"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid pattern -->
+  <rect width="1200" height="630" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+  <!-- Accent line top -->
+  <rect x="0" y="0" width="1200" height="3" fill="url(#accent-g)"/>
+  <!-- Big "5" -->
+  <text x="100" y="420" font-family="'Space Mono',monospace,sans-serif" font-size="380" font-weight="700" fill="#ff4d2e" opacity="0.12">5</text>
+  <!-- Logo area -->
+  <rect x="80" y="80" width="56" height="56" rx="12" fill="#ff4d2e"/>
+  <text x="108" y="120" font-family="monospace" font-size="32" font-weight="700" fill="white" text-anchor="middle">5</text>
+  <!-- Brand name -->
+  <text x="152" y="118" font-family="'Space Mono',monospace,sans-serif" font-size="26" font-weight="700" fill="#e8e9ed" letter-spacing="-1">Daily<tspan fill="#ff4d2e">Five</tspan>.at</text>
+  <!-- Main headline -->
+  <text x="80" y="290" font-family="'Space Grotesk',sans-serif" font-size="72" font-weight="700" fill="#e8e9ed" letter-spacing="-2">5 Drops.</text>
+  <text x="80" y="375" font-family="'Space Grotesk',sans-serif" font-size="72" font-weight="700" letter-spacing="-2">
+    <tspan fill="#ff4d2e">Täglich.</tspan>
+  </text>
+  <!-- Subtext -->
+  <text x="80" y="440" font-family="'Space Grotesk',sans-serif" font-size="28" fill="#6b6e7a">Kuratierte Deals für Österreich · Jeder mit Countdown</text>
+  <!-- Time slots -->
+  <g transform="translate(80, 500)">
+    <rect width="88" height="36" rx="8" fill="rgba(255,77,46,0.12)" stroke="rgba(255,77,46,0.3)" stroke-width="1"/>
+    <text x="44" y="24" font-family="monospace" font-size="14" font-weight="700" fill="#ff4d2e" text-anchor="middle">08:00</text>
+  </g>
+  <g transform="translate(178, 500)">
+    <rect width="88" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="44" y="24" font-family="monospace" font-size="14" font-weight="700" fill="#6b6e7a" text-anchor="middle">10:00</text>
+  </g>
+  <g transform="translate(276, 500)">
+    <rect width="88" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="44" y="24" font-family="monospace" font-size="14" font-weight="700" fill="#6b6e7a" text-anchor="middle">12:00</text>
+  </g>
+  <g transform="translate(374, 500)">
+    <rect width="88" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="44" y="24" font-family="monospace" font-size="14" font-weight="700" fill="#6b6e7a" text-anchor="middle">16:00</text>
+  </g>
+  <g transform="translate(472, 500)">
+    <rect width="88" height="36" rx="8" fill="rgba(0,255,204,0.07)" stroke="rgba(0,255,204,0.2)" stroke-width="1"/>
+    <text x="44" y="24" font-family="monospace" font-size="14" font-weight="700" fill="#00ffcc" text-anchor="middle">20:00 🔮</text>
+  </g>
+  <!-- Right side decoration -->
+  <text x="900" y="320" font-size="160" text-anchor="middle">🔥</text>
+  <text x="1050" y="280" font-size="100" text-anchor="middle">⚡</text>
+  <text x="980" y="480" font-size="90" text-anchor="middle">🛍️</text>
+  <!-- Bottom border -->
+  <rect x="0" y="627" width="1200" height="3" fill="url(#accent-g)" opacity="0.5"/>
+</svg>
