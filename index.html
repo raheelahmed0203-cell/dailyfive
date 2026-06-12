@@ -526,7 +526,7 @@ header{border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:
       <div class="dotd-timer">⏱ <span id="dotdTimer">–</span></div>
       <div class="dotd-shop" id="dotdShop"></div>
      </div>
-     <a id="dotdCta" class="dotd-cta" href="#" target="_blank" rel="noopener sponsored" onclick="dotdClick();return false;">⭐ Deal des Tages sichern →</a>
+     <a id="dotdCta" class="dotd-cta" href="#" target="_blank" rel="noopener sponsored" onclick="event.stopPropagation();dotdClick();return false;">⭐ Deal des Tages sichern →</a>
     </div>
    </div>
   </div>
@@ -585,10 +585,10 @@ header{border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:
       <div class="m-title" id="mTitle">Der Mystery Drop wartet</div>
       <div class="m-desc" id="mDesc">Jeden Abend um 20:00 — der beste Deal des Tages. Clues:</div>
       <div class="m-clues" id="mClues">
-       <span class="m-clue">🇦🇹 Österreich</span>
-       <span class="m-clue">Technik</span>
-       <span class="m-clue">60%+ Rabatt</span>
-       <span class="m-clue">50 Stück</span>
+       <span class="m-clue">🎧 Audio</span>
+       <span class="m-clue">Apple</span>
+       <span class="m-clue">40%+ Rabatt</span>
+       <span class="m-clue">💎 Premium</span>
       </div>
      </div>
      <div class="mystery-cd">
@@ -958,10 +958,10 @@ const SEED_DEALS=[
 
 const AFFILIATE_CFG={
  amazon:{
-  tag:'dailyfive-21',   // TODO: eigenen Amazon-Associates-Tag eintragen
+  tag:'dailyfive-21',
  },
  awin:{
-  publisherId:'',        // TODO: eigene AWIN-Publisher-ID eintragen (leer = nur UTM, kein Provisionslink)
+  publisherId:'',
  },
 };
 
@@ -1359,7 +1359,7 @@ function buildDOTD(){
  if(!d)return;
  e('dotdEmoji',d.emoji);e('dotdTitle',d.title);e('dotdPrice','€'+d.priceNow);e('dotdWas','€'+d.priceWas);e('dotdSave','−'+sp(d.priceNow,d.priceWas)+'%');e('dotdMeta',d.shop);e('dotdShop',d.shop);
  const card=document.getElementById('dotdCard');if(card){card.dataset.href=buildLink(d.affiliate,d.affiliateNetwork,d.awinMid)||'#';card.dataset.id=d.id;}
- const cta=document.getElementById('dotdCta');if(cta){const href=buildLink(d.affiliate,d.affiliateNetwork,d.awinMid)||'#';cta.href=href;}
+ const cta=document.getElementById('dotdCta');if(cta){const href=buildLink(d.affiliate,d.affiliateNetwork,d.awinMid,d.shop)||'#';cta.href=href;}
 }
 function dotdClick(){const c=document.getElementById('dotdCard');if(!c)return;trackClick(parseInt(c.dataset.id));if(c.dataset.href&&c.dataset.href!=='#')window.open(c.dataset.href,'_blank','noopener');}
 function updateDOTDTimer(){
@@ -1410,10 +1410,10 @@ function updateMystery(){
   document.getElementById('mysteryCard')?.classList.add('mystery-revealed');
   const r=adminData||(mystery&&mystery.revealed)||null;
   if(r){
-   e('mTitle','🎉 Mystery Drop ist live!');e('mDesc','Nur noch wenige Stück — jetzt sichern!');
+   e('mTitle','🎉 Mystery Drop ist live!');e('mDesc',r&&r.priceCheck?'Preis täglich aktuell prüfen — Angebot kann enden.':'Nur noch wenige Stück — jetzt sichern!');
    e('mIcon',r.emoji||'🎉');
    const cluesEl=document.getElementById('mClues');
-   if(cluesEl)cluesEl.innerHTML=`<a href="${sanitize(buildLink(r.affiliate,r.affiliateNetwork,r.awinMid)||'#')}" target="_blank" rel="noopener sponsored" onclick="trackClick(${mystery?mystery.id:5});badge('mythic')" style="background:var(--accent);color:#fff;padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none">€${r.priceNow} sichern →</a>`;
+   if(cluesEl)cluesEl.innerHTML=`<a href="${sanitize(buildLink(r.affiliate,r.affiliateNetwork,r.awinMid,r.shop)||'#')}" target="_blank" rel="noopener sponsored" onclick="trackClick(${mystery?mystery.id:5});badge('mythic')" style="background:var(--accent);color:#fff;padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;text-decoration:none">€${r.priceNow} sichern →</a>`;
   }
   e('mLbl','Jetzt live');e('mTime','🔥 LIVE');e('mStatus','LIVE · Beeile dich!');return;
  }
@@ -1428,7 +1428,7 @@ function updateMystery(){
 function mysteryClick(){
  const mystery=DEALS.find(d=>d.mystery);
  const r=getMysteryData()||(mystery&&mystery.revealed);
- if(isMysteryRevealed()&&r){trackClick(mystery?mystery.id:5);badge('mythic');window.open(sanitize(buildLink(r.affiliate,r.affiliateNetwork,r.awinMid)||'#'),'_blank','noopener');}
+ if(isMysteryRevealed()&&r){trackClick(mystery?mystery.id:5);badge('mythic');window.open(sanitize(buildLink(r.affiliate,r.affiliateNetwork,r.awinMid,r.shop)||'#'),'_blank','noopener');}
  else openNotify();
 }
 
@@ -1891,10 +1891,11 @@ function renderBulkTable(){
   BULK_SLOTS.map((h,i)=>{
    const s=bulkState[i];
    const time=`${pad(h)}:00`;
-   if(h===20)return`<div class="bulk-row b-mystery">
+   if(h===20)return`<div class="bulk-row b-mystery" style="grid-template-columns:44px 78px 1fr 1fr 62px 62px 24px">
     <span class="btime">${time}</span>
     <span class="bshop myst">🔮 Mystery</span>
     <input class="binp" id="burl4" placeholder="Revealed URL (enthüllt 20:00)" value="${sanitize(s.url||'')}" oninput="bulkMysteryUrlChange(this.value)" style="font-size:10px">
+    <input class="binp" id="bttl4" placeholder="Produkttitel" style="font-size:10px">
     <input class="binp" id="bpn4" placeholder="€ jetzt" type="number" step="0.01" min="0">
     <input class="binp" id="bpw4" placeholder="€ war" type="number" step="0.01" min="0">
     <button class="bdel" onclick="bulkClearMystery()" title="Löschen">✕</button>
@@ -1927,7 +1928,7 @@ function bulkClearRow(i){
 }
 function bulkClearMystery(){
  bulkState[4]={url:'',shop:'🔮 Mystery',network:'direct',awinMid:null,cat:'Technik',emoji:'🛍️',hasUrl:false};
- ['burl4','bpn4','bpw4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+ ['burl4','bttl4','bpn4','bpw4'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
 }
 function bulkValidateRow(i){
  const s=bulkState[i];
@@ -1958,6 +1959,7 @@ function adminPublishAll(tomorrow){
   const pw=parseFloat(document.getElementById(`bpw${i}`)?.value)||0;
   if(h===20){
    const revUrl=(document.getElementById('burl4')?.value||'').trim();
+   const revTitle=(document.getElementById('bttl4')?.value||'').trim();
    if(!revUrl||!pn||!pw)return;
    const ri=detectShopInfo(revUrl);
    const exp=new Date();exp.setDate(exp.getDate()+(tomorrow?1:0));exp.setHours(22,0,0,0);
@@ -1965,7 +1967,7 @@ function adminPublishAll(tomorrow){
     priceNow:null,priceWas:null,rarity:'mythic',score:99,claimedPct:0,claimedNum:'',
     affiliate:null,affiliateNetwork:null,awinMid:null,clicks:0,dotd:false,active:!tomorrow,
     mystery:true,liveCheckedAt:new Date().toISOString(),expiresAt:exp.toISOString(),cat:'',hints:[],
-    revealed:{shop:ri?ri.shop:'Shop',title:'Mystery Deal',emoji:ri?ri.emoji:'🎁',
+    revealed:{shop:ri?ri.shop:'Shop',title:revTitle||'Mystery Deal',emoji:ri?ri.emoji:'🎁',
      priceNow:pn,priceWas:pw,affiliate:revUrl,affiliateNetwork:ri?ri.network:'direct',awinMid:ri?ri.awinMid:null}});
    added++;return;
   }
@@ -2167,16 +2169,14 @@ function adminAddDeal(){
 // ── LEGAL / IMPRESSUM ─────────────────────────────────────────────────
 const LEGAL_CONTENT={
  impressum:`<h3 style="color:var(--text);margin-bottom:12px;font-size:14px">Impressum</h3>
-<p style="color:rgba(255,255,255,.3);font-size:10px;margin-bottom:12px;padding:7px 10px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:6px">⚠️ Pflichtangaben gemäß §5 ECG — bitte ausfüllen und im Code ersetzen.</p>
 <p><strong style="color:var(--text)">Angaben gemäß §5 ECG (Österreich)</strong><br>
-[Vorname Nachname / Firmenname]<br>
-[Straße und Hausnummer]<br>
-[PLZ Ort]<br>
-Österreich</p>
+Raheel Ahmed<br>
+Wien, Österreich</p>
 <p style="margin-top:10px"><strong style="color:var(--text)">Kontakt</strong><br>
-E-Mail: raheel.ahmed0203@gmail.com</p>
+E-Mail: <a href="mailto:raheel.ahmed0203@gmail.com" style="color:var(--xp)">raheel.ahmed0203@gmail.com</a></p>
 <p style="margin-top:10px"><strong style="color:var(--text)">Affiliate-Hinweis</strong><br>
-DailyFive AT ist ein Affiliate-Informationsangebot. Wir sind Teilnehmer am Amazon Associates-Programm sowie Mitglied bei AWIN. Über unsere mit * gekennzeichneten Links erhalten wir eine Provision, ohne dass für dich Mehrkosten entstehen.</p>`,
+DailyFive AT ist ein Affiliate-Informationsangebot. Wir sind Teilnehmer am Amazon Partnernet-Programm sowie Mitglied bei AWIN. Über unsere mit * gekennzeichneten Links erhalten wir eine Provision, ohne dass für dich Mehrkosten entstehen.</p>
+<p style="margin-top:10px;font-size:10px;color:var(--muted2)">Inhaltlich verantwortlich gemäß §18 Abs. 2 MStV: Raheel Ahmed, Wien</p>`,
  datenschutz:`<h3 style="color:var(--text);margin-bottom:12px;font-size:14px">Datenschutzerklärung</h3>
 <p><strong style="color:var(--text)">Verantwortlicher</strong><br>[Name/Firma, siehe Impressum]</p>
 <p style="margin-top:10px"><strong style="color:var(--text)">Welche Daten wir speichern</strong><br>
