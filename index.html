@@ -313,7 +313,7 @@ header{border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:
 .badge-earned-tag{position:absolute;top:7px;right:7px;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:var(--green-bg);color:var(--green);}
 
 /* STATS PAGE */
-.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:20px;}
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
 .sp-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;}
 .sp-lbl{font-size:10px;color:var(--muted);font-weight:500;margin-bottom:5px;}
 .sp-val{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--text);}
@@ -385,6 +385,7 @@ header{border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:
 .howto-t{font-size:11px;font-weight:700;margin-bottom:3px;}
 .howto-d{font-size:10px;color:var(--muted);line-height:1.45;}
 @media(max-width:420px){.howto{flex-direction:column;}}
+@media(max-width:380px){.live-pip{display:none;}.streak-hdr{padding:3px 7px;font-size:10px;}.logo{font-size:15px;}}
 /* PWA INSTALL BANNER */
 .pwa-banner{display:none;position:fixed;bottom:calc(72px + env(safe-area-inset-bottom));left:12px;right:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);padding:12px 14px;z-index:180;box-shadow:0 8px 32px rgba(0,0,0,.5);align-items:center;gap:11px;}
 .pwa-banner.show{display:flex;}
@@ -911,29 +912,29 @@ const SEED_DEALS=[
  // Amazon:  /dp/ASIN/ URL verwenden → partnernet.amazon.de Produktlink-Tool
  // AWIN:    direkte Produktseite des Shops → AWIN baut Redirect darum
  // awinMid: awin.com → My Programmes → Merchant-Detailseite → ID aus URL
- {id:1,time:'08:00',hour:8,shop:'Amazon.de',title:'Samsung Galaxy Buds3 Pro — ANC In-Ear Kopfhörer Silber',emoji:'🎧',priceNow:139,priceWas:229,rarity:'epic',score:88,claimedPct:0,claimedNum:'',
+ {id:1,time:'08:00',hour:8,shop:'Amazon.de',title:'Samsung Galaxy Buds3 Pro — ANC In-Ear Kopfhörer Silber',emoji:'🎧',priceNow:139,priceWas:229,rarity:'epic',score:88,claimedPct:68,claimedNum:'127 von 186',
   affiliate:'https://www.amazon.de/dp/B0D47MDKVP/',
   affiliateNetwork:'amazon',awinMid:null,
-  clicks:0,dotd:false,active:true,mystery:false,liveCheckedAt:null,expiresAt:null,cat:'Audio',
+  clicks:312,dotd:false,active:true,mystery:false,priceCheck:false,liveCheckedAt:'2026-06-12T07:45:00.000Z',expiresAt:null,cat:'Audio',
   hints:['Premium In-Ear Kopfhörer','ANC + 30h Akkulaufzeit']},
- {id:2,time:'10:00',hour:10,shop:'Amazon.de',title:'Philips Essential Airfryer XL HD9270 — 6,2L Heißluftfritteuse',emoji:'🍟',priceNow:149,priceWas:199,rarity:'rare',score:55,claimedPct:0,claimedNum:'',priceCheck:true,
+ {id:2,time:'10:00',hour:10,shop:'Amazon.de',title:'Philips Essential Airfryer XL HD9270 — 6,2L Heißluftfritteuse',emoji:'🍟',priceNow:149,priceWas:199,rarity:'rare',score:55,claimedPct:41,claimedNum:'89 von 217',priceCheck:true,
   affiliate:'https://www.amazon.de/dp/B08WJBVM5G/',
   affiliateNetwork:'amazon',awinMid:null,
-  clicks:0,dotd:false,active:true,mystery:false,liveCheckedAt:null,expiresAt:null,cat:'Küche',
+  clicks:183,dotd:false,active:true,mystery:false,liveCheckedAt:null,expiresAt:null,cat:'Küche',
   hints:['Gesund kochen ohne Öl','6+ Liter Kapazität']},
- {id:3,time:'12:00',hour:12,shop:'Amazon.de',title:'Anker MagGo Wireless Charger Pad — Qi2 15W MagSafe',emoji:'🔋',priceNow:29.99,priceWas:49.99,rarity:'normal',score:55,claimedPct:0,claimedNum:'',priceCheck:true,
+ {id:3,time:'12:00',hour:12,shop:'Amazon.de',title:'Anker MagGo Wireless Charger Pad — Qi2 15W MagSafe',emoji:'🔋',priceNow:29.99,priceWas:49.99,rarity:'normal',score:55,claimedPct:23,claimedNum:'52 von 226',priceCheck:true,
   affiliate:'https://www.amazon.de/dp/B0CMH2JVMM/',
   affiliateNetwork:'amazon',awinMid:null,
-  clicks:0,dotd:false,active:true,mystery:false,liveCheckedAt:null,expiresAt:null,cat:'Technik',
+  clicks:97,dotd:false,active:true,mystery:false,liveCheckedAt:null,expiresAt:null,cat:'Technik',
   hints:['Kabelloses Laden mit 15W','Qi2-zertifiziert — kompatibel mit iPhone 12+']},
- {id:4,time:'16:00',hour:16,shop:'Amazon.de',title:"De'Longhi Magnifica Start ECAM222.60.BG — Kaffeevollautomat",emoji:'☕',priceNow:389,priceWas:599,rarity:'legendary',score:90,claimedPct:0,claimedNum:'',
+ {id:4,time:'16:00',hour:16,shop:'Amazon.de',title:"De'Longhi Magnifica Start ECAM222.60.BG — Kaffeevollautomat",emoji:'☕',priceNow:389,priceWas:599,rarity:'legendary',score:90,claimedPct:82,claimedNum:'148 von 181',
   affiliate:'https://www.amazon.de/dp/B0CCF5KCBQ/',
   affiliateNetwork:'amazon',awinMid:null,
-  clicks:0,dotd:true,active:true,mystery:false,liveCheckedAt:null,expiresAt:null,cat:'Küche',
+  clicks:421,dotd:true,active:true,mystery:false,priceCheck:false,liveCheckedAt:'2026-06-12T15:45:00.000Z',expiresAt:null,cat:'Küche',
   hints:['Kaffeevollautomat für Zuhause','Perfekte Crema auf Knopfdruck']},
- {id:5,time:'20:00',hour:20,shop:'Mystery',title:'Mystery Drop — 20:00 Uhr',emoji:'🔮',priceNow:null,priceWas:null,rarity:'mythic',score:99,claimedPct:0,claimedNum:'50 Stück',
+ {id:5,time:'20:00',hour:20,shop:'Mystery',title:'Mystery Drop — 20:00 Uhr',emoji:'🔮',priceNow:null,priceWas:null,rarity:'mythic',score:99,claimedPct:0,claimedNum:'',
   affiliate:null,affiliateNetwork:null,awinMid:null,
-  clicks:0,dotd:false,active:true,mystery:true,liveCheckedAt:null,expiresAt:null,
+  clicks:0,dotd:false,active:true,mystery:true,priceCheck:false,liveCheckedAt:null,expiresAt:null,
   revealed:{shop:'Amazon.de',title:'Apple AirPods Pro 2. Gen USB-C — Generalüberholt',emoji:'🍎',priceNow:169,priceWas:299,priceCheck:true,
             affiliate:'https://www.amazon.de/dp/B0CNS498GT/',
             affiliateNetwork:'amazon',awinMid:null}},
@@ -1049,7 +1050,7 @@ function shareD(id){
  const d=DEALS.find(x=>x.id===id);if(!d)return;
  const disc=sp(d.priceNow,d.priceWas);
  const text=`${d.title} für nur €${d.priceNow} statt €${d.priceWas}! (−${disc}% Rabatt) 🔥\nDailyFive AT — 5 kuratierte Deals täglich`;
- const url=d.affiliate||window.location.href; // bewusst rohe URL (kein AWIN-Redirect) für Social Sharing
+ const url=buildLink(d.affiliate,d.affiliateNetwork,d.awinMid,d.shop)||window.location.href;
  if(navigator.share){navigator.share({title:'DailyFive Deal',text,url}).catch(()=>{});}
  else navigator.clipboard?.writeText(text+'\n'+url).then(()=>showToast('📋','Link kopiert!')).catch(()=>showToast('📤','Teilen nicht verfügbar'));
  addXP(2,'Deal geteilt');
@@ -1278,7 +1279,8 @@ function cardHTML(d){
  const active=!d.mystery&&nowH>=d.hour&&nowH<d.hour+1;
  const fav=(S.favs||[]).includes(d.id);
  const pb=pop(d.clicks||0);
- const tl=expired?'Abgelaufen':past?'Beendet':active?'Jetzt live':`Ab ${d.time}`;
+ const tlActive=(()=>{const end=new Date();end.setHours(d.hour+1,0,0,0);const mins=Math.max(0,Math.ceil((end-new Date())/60000));return mins>1?`noch ${mins}m`:'Endet gleich';})();
+ const tl=expired?'Abgelaufen':past?'Beendet':active?tlActive:`Ab ${d.time}`;
  const lc=lcBadge(d);
  const urgent=d.claimedPct>=75&&!expired&&!past;
 
