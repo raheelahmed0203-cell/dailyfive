@@ -454,6 +454,11 @@ header{border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:
 </style>
 </head>
 <body>
+<!-- Netlify form detection (hidden, required for form submissions) -->
+<form name="email-signup" netlify netlify-honeypot="bot-field" hidden>
+ <input type="text" name="bot-field" aria-hidden="true">
+ <input type="email" name="email">
+</form>
 
 <header>
  <div class="hdr wrap-wide z1">
@@ -784,12 +789,12 @@ header{border-bottom:1px solid var(--border);padding:0 16px;position:sticky;top:
      </div>
      <input type="text" class="m-input" id="cfgWeb3forms" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" style="margin-bottom:0" autocomplete="off">
      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
-     <span class="adm-lbl" style="font-size:11px;color:var(--text)">📊 Analytics Script (kostenlos: Cloudflare · Umami · Plausible)</span>
+     <span class="adm-lbl" style="font-size:11px;color:var(--text)">📊 Cloudflare Web Analytics (kostenlos, keine Cookies, DSGVO-konform)</span>
      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 12px;margin-bottom:7px;font-size:10px;color:var(--muted);line-height:1.7">
-      Empfehlung: <a href="https://developers.cloudflare.com/analytics/web-analytics/" target="_blank" rel="noopener" style="color:var(--xp)">Cloudflare Web Analytics</a> — kostenlos, keine Cookies, DSGVO-konform.<br>
-      Das &lt;script&gt;-Tag hier einfügen → wird beim nächsten Seitenaufruf geladen.
+      1. <a href="https://dash.cloudflare.com/" target="_blank" rel="noopener" style="color:var(--xp)">dash.cloudflare.com</a> → Web Analytics → Add a site<br>
+      2. Token kopieren → hier einfügen → Speichern → fertig.
      </div>
-     <textarea class="m-input" id="cfgAnalytics" placeholder='&lt;script defer src="..." data-token="..."&gt;&lt;/script&gt;' style="height:58px;resize:none;font-size:11px;font-family:var(--mono);margin-bottom:0"></textarea>
+     <input type="text" class="m-input" id="cfgCfToken" placeholder="Cloudflare Beacon Token (32 Zeichen)" style="margin-bottom:0;font-family:var(--mono);font-size:12px" autocomplete="off">
      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
      <span class="adm-lbl">Neues Admin-Passwort (leer = kein Wechsel)</span><input type="password" class="m-input" id="cfgNewPwd" placeholder="Neues Passwort" style="margin-bottom:0">
      <button class="m-btn m-btn-p" style="margin-top:10px;margin-bottom:0" onclick="adminSaveConfig()">Speichern</button>
@@ -1492,37 +1497,57 @@ function updateBnav(id){
 
 // ── MODAL / NOTIFY ────────────────────────────────────────────────────
 function openNotify(){
- document.getElementById('notifyBody').innerHTML=`<div class="modal-icon">🔔</div><div class="modal-title">Keine Drops mehr verpassen</div><div class="modal-sub">Trage dich ein — wir schicken dir eine Kalender-Erinnerung die wirklich funktioniert.</div><div class="modal-perks"><div class="modal-perk"><div class="perk-i">📅</div><span>Tägliche Kalender-Erinnerung (07:50 Uhr)</span></div><div class="modal-perk"><div class="perk-i">📧</div><span>E-Mail bei besonderen Drops</span></div><div class="modal-perk"><div class="perk-i">🔥</div><span>+10 XP sofort</span></div></div><input type="email" class="m-input" id="emailInput" placeholder="deine@email.at" inputmode="email"><button class="m-btn m-btn-p" onclick="submitNotify()">Kostenlos anmelden</button><button class="m-btn m-btn-g" onclick="closeOv('notifyOverlay')">Nein danke</button>`;
+ const pushGranted='Notification'in window&&Notification.permission==='granted';
+ const pushDenied='Notification'in window&&Notification.permission==='denied';
+ const pushBtn=pushGranted
+  ?`<button class="m-btn" style="background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3);margin-bottom:8px;cursor:default" disabled>✅ Browser-Benachrichtigungen aktiv</button>`
+  :!pushDenied
+  ?`<button class="m-btn m-btn-p" onclick="activatePush(this)" style="margin-bottom:8px">🔔 Browser-Benachrichtigung aktivieren</button>`
+  :'';
+ document.getElementById('notifyBody').innerHTML=`<div class="modal-icon">🔔</div><div class="modal-title">Keine Drops mehr verpassen</div><div class="modal-sub">Wähle wie du täglich erinnert werden möchtest.</div>${pushBtn}<div style="display:flex;align-items:center;gap:8px;margin:8px 0"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:11px;color:var(--muted);white-space:nowrap">oder per E-Mail</span><div style="flex:1;height:1px;background:var(--border)"></div></div><input type="email" class="m-input" id="emailInput" placeholder="deine@email.at" inputmode="email"><button class="m-btn m-btn-p" onclick="submitNotify()">Per E-Mail anmelden (+10 XP)</button><button class="m-btn m-btn-g" onclick="closeOv('notifyOverlay')">Nein danke</button>`;
  document.getElementById('notifyOverlay').classList.add('open');
 }
 async function submitNotify(){
  const em=(document.getElementById('emailInput')?.value||'').trim();
  if(!em||!em.includes('@')||!em.includes('.')){showToast('⚠️','Bitte gültige E-Mail eingeben');return;}
- // Lokal speichern (immer, als Backup)
  const stored=JSON.parse(localStorage.getItem('df_emails')||'[]');
  const isNew=!stored.includes(em);
  if(isNew)stored.push(em);
  localStorage.setItem('df_emails',JSON.stringify(stored));
- // An Service senden
- const sent=await sendEmailToService(em,isNew);
+ sendEmailToService(em,isNew); // fire-and-forget
+ addXP(10,'Angemeldet');
+ document.getElementById('bellDot').style.display='block';
+ buildStatsHero();
+ const pushGranted='Notification'in window&&Notification.permission==='granted';
+ const pushDenied='Notification'in window&&Notification.permission==='denied';
+ const pushOffer=(!pushGranted&&!pushDenied)
+  ?`<button class="m-btn" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2);margin-bottom:8px" onclick="activatePush(this)">🔔 Auch Browser-Benachrichtigung aktivieren</button>`
+  :pushGranted?`<div style="font-size:12px;color:var(--green);margin-bottom:12px">✅ Browser-Benachrichtigungen aktiv</div>`:'';
  document.getElementById('notifyBody').innerHTML=`<div style="text-align:center;padding:12px 0">
   <div style="font-size:40px;margin-bottom:12px">🎉</div>
   <div style="font-size:18px;font-weight:700;margin-bottom:6px">Du bist dabei!</div>
-  <div style="font-size:12px;color:var(--muted);margin-bottom:18px">Erster Drop morgen 08:00 · Mystery heute 20:00</div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Erster Drop morgen 08:00 · Mystery heute 20:00</div>
+  ${pushOffer}
   <button class="m-btn m-btn-p" style="margin-bottom:8px" onclick="downloadCalendar();closeOv('notifyOverlay')">📅 Kalender-Erinnerung hinzufügen</button>
   <button class="m-btn" style="background:var(--bg3);color:var(--text);border:1px solid var(--border2);margin-bottom:8px" onclick="shareApp()">📤 Freunden empfehlen</button>
   <div style="font-size:10px;color:var(--muted2)">Funktioniert auf iPhone, Android, Mac & Windows</div>
  </div>`;
- addXP(10,'Angemeldet');
- document.getElementById('bellDot').style.display='block';
- buildStatsHero();
 }
 
 async function sendEmailToService(email,isNew){
+ if(!isNew)return true;
+ // Netlify Forms (kein API-Key nötig, erscheint im Netlify Dashboard unter "Forms")
+ try{
+  const body=new URLSearchParams();
+  body.append('form-name','email-signup');
+  body.append('email',email);
+  const r=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});
+  if(r.ok)return true;
+ }catch{}
+ // Fallback: web3forms (wenn im Admin konfiguriert)
  try{
   const cfg=JSON.parse(localStorage.getItem('df_affiliate_cfg')||'{}');
   if(!cfg.web3formsKey)return false;
-  if(!isNew)return true; // nicht doppelt senden
   const res=await fetch('https://api.web3forms.com/submit',{
    method:'POST',
    headers:{'Content-Type':'application/json','Accept':'application/json'},
@@ -1530,13 +1555,63 @@ async function sendEmailToService(email,isNew){
     access_key:cfg.web3formsKey,
     subject:'🔥 Neue DailyFive AT Anmeldung',
     from_name:'DailyFive AT',
-    email:email,
+    email,
     message:`Neue Anmeldung: ${email}\nDatum: ${new Date().toLocaleString('de-AT',{timeZone:'Europe/Vienna'})}`
    })
   });
   const data=await res.json();
   return data.success===true;
  }catch{return false;}
+}
+
+async function activatePush(btn){
+ if(!('Notification'in window))return;
+ btn.disabled=true;btn.textContent='…';
+ const perm=await Notification.requestPermission();
+ if(perm==='granted'){
+  scheduleDealNotifications();
+  localStorage.setItem('df_push_enabled','1');
+  updateBellState();
+  btn.style.cssText='background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.3);margin-bottom:8px;width:100%;padding:12px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:default';
+  btn.textContent='✅ Benachrichtigungen aktiv';
+  addXP(5,'Push aktiviert');
+  showToast('🔔','Benachrichtigungen aktiviert — du wirst bei jedem Drop informiert!');
+ }else{
+  btn.disabled=false;btn.textContent='🔔 Auch Browser-Benachrichtigung aktivieren';
+  showToast('⚠️','Benachrichtigungen blockiert. Bitte im Browser-Einstellungen erlauben.');
+ }
+}
+
+function updateBellState(){
+ const dot=document.getElementById('bellDot');if(!dot)return;
+ const hasEmail=(JSON.parse(localStorage.getItem('df_emails')||'[]')).length>0;
+ const pushOn='Notification'in window&&Notification.permission==='granted';
+ if(hasEmail||pushOn)dot.style.display='block';
+ dot.style.background=pushOn?'var(--green)':'var(--accent)';
+ if(pushOn)scheduleDealNotifications();
+}
+
+function scheduleDealNotifications(){
+ if(!('Notification'in window)||Notification.permission!=='granted')return;
+ if(!('serviceWorker'in navigator))return;
+ const now=new Date();
+ (loadDeals()||[]).filter(d=>!d.mystery&&d.priceNow&&d.active!==false).forEach(d=>{
+  const t=new Date();t.setHours(d.hour,0,0,0);
+  const ms=t-now;
+  if(ms>60000&&ms<24*3600000){
+   setTimeout(async()=>{
+    try{
+     const reg=await navigator.serviceWorker.ready;
+     const pct=d.priceWas?Math.round((1-d.priceNow/d.priceWas)*100):0;
+     reg.showNotification(`${d.emoji} Drop jetzt live!`,{
+      body:`${d.title.substring(0,60)}${pct?` — €${d.priceNow} (−${pct}%)`:''}`,
+      icon:'/icon.svg',badge:'/icon.svg',
+      tag:'df-deal-'+d.id,data:{url:'/'},vibrate:[100,50,100]
+     });
+    }catch{}
+   },ms);
+  }
+ });
 }
 function closeOv(id,ev){if(ev&&ev.target.id!==id)return;document.getElementById(id)?.classList.remove('open');}
 
@@ -1688,28 +1763,29 @@ function adminLoadConfig(){
   const cfg=JSON.parse(localStorage.getItem('df_affiliate_cfg')||'{}');
   if(cfg.amazonTag)AFFILIATE_CFG.amazon.tag=cfg.amazonTag;
   if(cfg.awinPub)AFFILIATE_CFG.awin.publisherId=cfg.awinPub;
-  if(cfg.analyticsScript&&!document.getElementById('df-analytics'))injectAnalytics(cfg.analyticsScript);
+  if(cfg.cfToken&&!document.getElementById('df-cf-beacon'))injectCfBeacon(cfg.cfToken);
   const at=document.getElementById('cfgAmazonTag'),ai=document.getElementById('cfgAwinId');
-  const w3=document.getElementById('cfgWeb3forms'),ana=document.getElementById('cfgAnalytics');
+  const w3=document.getElementById('cfgWeb3forms'),cft=document.getElementById('cfgCfToken');
   if(at)at.value=cfg.amazonTag||'';
   if(ai)ai.value=cfg.awinPub||'';
   if(w3)w3.value=cfg.web3formsKey||'';
-  if(ana)ana.value=cfg.analyticsScript||'';
+  if(cft)cft.value=cfg.cfToken||'';
  }catch{}
 }
 function adminSaveConfig(){
  const at=(document.getElementById('cfgAmazonTag')?.value||'').trim();
  const ai=(document.getElementById('cfgAwinId')?.value||'').trim();
  const w3f=(document.getElementById('cfgWeb3forms')?.value||'').trim();
- const analytics=(document.getElementById('cfgAnalytics')?.value||'').trim();
+ const cfToken=(document.getElementById('cfgCfToken')?.value||'').trim();
  const np=document.getElementById('cfgNewPwd')?.value||'';
- localStorage.setItem('df_affiliate_cfg',JSON.stringify({amazonTag:at,awinPub:ai,web3formsKey:w3f,analyticsScript:analytics}));
+ localStorage.setItem('df_affiliate_cfg',JSON.stringify({amazonTag:at,awinPub:ai,web3formsKey:w3f,cfToken}));
  if(at)AFFILIATE_CFG.amazon.tag=at;
  if(ai)AFFILIATE_CFG.awin.publisherId=ai;
  if(np)localStorage.setItem('df_admin_pwd',_h(np));
- if(analytics)injectAnalytics(analytics);
+ if(cfToken)injectCfBeacon(cfToken);
  document.getElementById('cfgNewPwd').value='';
- showToast('✅',`Gespeichert${w3f?' · E-Mail aktiv':''}`);
+ const extras=[w3f&&'E-Mail aktiv',cfToken&&'Analytics aktiv'].filter(Boolean).join(' · ');
+ showToast('✅','Gespeichert'+(extras?' · '+extras:''));
  adminConfigWarnings();
 }
 function injectAnalytics(scriptHtml){
@@ -1722,6 +1798,15 @@ function injectAnalytics(scriptHtml){
  if(s.src)el.src=s.src;
  [...s.attributes].forEach(a=>{if(a.name!=='src')el.setAttribute(a.name,a.value);});
  el.id='df-analytics';
+ document.head.appendChild(el);
+}
+function injectCfBeacon(token){
+ if(!token||document.getElementById('df-cf-beacon'))return;
+ const el=document.createElement('script');
+ el.defer=true;
+ el.src='https://static.cloudflareinsights.com/beacon.min.js';
+ el.setAttribute('data-cf-beacon',JSON.stringify({token}));
+ el.id='df-cf-beacon';
  document.head.appendChild(el);
 }
 
@@ -2320,7 +2405,10 @@ function injectDealsSchema(){
 // ── INIT ──────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
  autoExpireCheck();
- try{const cfg=JSON.parse(localStorage.getItem('df_affiliate_cfg')||'{}');if(cfg.analyticsScript)injectAnalytics(cfg.analyticsScript);}catch{}
+ try{
+  const cfg=JSON.parse(localStorage.getItem('df_affiliate_cfg')||'{}');
+  if(cfg.cfToken)injectCfBeacon(cfg.cfToken);
+ }catch{}
  adminLoadConfig();
  DEALS=getActiveDeals();
  badge('first_visit');checkStreak();updateXP();updateStreakUI();
@@ -2331,6 +2419,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  setTimeout(fomoLoop,12000);
  fetchDealsJson();
  if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+ updateBellState();
  if(window.location.hash==='#admin')openAdmin();
  window.addEventListener('hashchange',()=>{if(window.location.hash==='#admin')openAdmin();});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')fetchDealsJson();});
